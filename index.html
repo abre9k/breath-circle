@@ -34,13 +34,26 @@
     }
 
     .circle {
-      background: #727a69;
+      background: #4f5f47;
       width: min(46vmin, 360px);
       aspect-ratio: 1/1;
       border-radius: 50%;
-      box-shadow: 0px 0px 10px 0px #000000;
+      box-shadow: 0px 0px 20px 0px #000000;
       transform: scale(0.65);
       animation: breathe var(--DURATION) ease-in-out infinite;
+    }
+
+    .background-circle {
+      position: absolute;
+      width: min(46vmin, 360px);
+      aspect-ratio: 1/1;
+      border-radius: 50%;
+      border: 2px solid rgba(255, 255, 255, 0.15);
+      /* zarte Kontur */
+      transform: scale(1.00);
+      /* maximale Grösse */
+      pointer-events: none;
+      /* keine Interaktion */
     }
 
     /* Neu: Pausen integriert */
@@ -179,6 +192,7 @@
 
 <body>
   <div class="wrap" aria-label="Atemübung – einatmen, halten, ausatmen, halten">
+    <div class="background-circle" aria-hidden="true"></div>
     <div class="circle" role="img" aria-hidden="true"></div>
     <div class="label" aria-hidden="true">
       <span class="inhale">Einatmen</span>
