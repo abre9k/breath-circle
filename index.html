@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="de-ch">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Breath Circle – Minimal</title>
+  <style>
+    /* --- Einstellungen ---
+       Einatmen / Halten / Ausatmen / Halten = total DURATION
+       Beispiel: 4 + 2 + 4 + 2 = 12s */
+    :root {
+      --DURATION: 12s;
+    }
+
+    body {
+      background: #4b573e;
+    }
+
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+      color: #111;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    .wrap {
+      height: 100%;
+      display: grid;
+      place-items: center;
+      user-select: none;
+      cursor: default;
+    }
+
+    .circle {
+      background: #727a69;
+      width: min(46vmin, 360px);
+      aspect-ratio: 1/1;
+      border-radius: 50%;
+      box-shadow: 0px 0px 10px 0px #000000;
+      transform: scale(0.65);
+      animation: breathe var(--DURATION) ease-in-out infinite;
+    }
+
+    /* Neu: Pausen integriert */
+    @keyframes breathe {
+      0% {
+        transform: scale(0.33);
+      }
+
+      /* Start – klein */
+      33% {
+        transform: scale(1.00);
+      }
+
+      /* Ende Einatmen */
+      50% {
+        transform: scale(1.00);
+      }
+
+      /* Halten gross */
+      83% {
+        transform: scale(0.33);
+      }
+
+      /* Ende Ausatmen */
+      100% {
+        transform: scale(0.33);
+      }
+
+      /* Halten klein */
+    }
+
+    .label {
+      color: #ffffff;
+      position: fixed;
+      bottom: 6vh;
+      /* opacity: 0.45; */
+      font-size: clamp(18px, 2.5vmin, 22px);
+    }
+
+    .inhale,
+    .hold1,
+    .exhale,
+    .hold2 {
+      color: #ffffff;
+      opacity: .1;
+      transition: opacity .3s ease;
+
+    }
+
+    /* Textphasen */
+    .inhale {
+      animation: showInhale var(--DURATION) linear infinite;
+    }
+
+    .hold1 {
+      animation: showHold1 var(--DURATION) linear infinite;
+    }
+
+    .exhale {
+      animation: showExhale var(--DURATION) linear infinite;
+    }
+
+    .hold2 {
+      animation: showHold2 var(--DURATION) linear infinite;
+    }
+
+    @keyframes showInhale {
+
+      0%,
+      33% {
+        opacity: .6;
+      }
+
+      33.01%,
+      100% {
+        opacity: .1;
+      }
+    }
+
+    @keyframes showHold1 {
+
+      33%,
+      50% {
+        opacity: .6;
+      }
+
+      0%,
+      32.99%,
+      50.01%,
+      100% {
+        opacity: .1;
+      }
+    }
+
+    @keyframes showExhale {
+
+      50%,
+      83% {
+        opacity: .6;
+      }
+
+      0%,
+      49.99%,
+      83.01%,
+      100% {
+        opacity: .1;
+      }
+    }
+
+    @keyframes showHold2 {
+
+      83%,
+      100% {
+        opacity: .6;
+      }
+
+      0%,
+      82.99% {
+        opacity: .1;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .circle {
+        animation: none;
+        transform: scale(0.85);
+      }
+
+      .label span {
+        animation: none;
+        opacity: .4;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap" aria-label="Atemübung – einatmen, halten, ausatmen, halten">
+    <div class="circle" role="img" aria-hidden="true"></div>
+    <div class="label" aria-hidden="true">
+      <span class="inhale">Einatmen</span>
+      <span class="hold1"> · Halten</span>
+      <span class="exhale"> · Ausatmen</span>
+      <span class="hold2"> · Halten</span>
+    </div>
+  </div>
+
+  <!-- <script>
+    // Klick oder Leertaste pausiert/fortsetzt
+    (function () {
+      let paused = false;
+      function toggle() {
+        paused = !paused;
+        document.querySelector('.circle').style.animationPlayState = paused ? 'paused' : 'running';
+        document.querySelectorAll('.label span').forEach(el => el.style.animationPlayState = paused ? 'paused' : 'running');
+      }
+      document.addEventListener('click', toggle);
+      document.addEventListener('keydown', e => { if (e.code === 'Space') { e.preventDefault(); toggle(); } });
+    })();
+  </script> -->
+</body>
+
+</html>
