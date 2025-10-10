@@ -6,9 +6,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Breath Circle</title>
   <style>
-    /* --- Einstellungen ---
-       Einatmen / Halten / Ausatmen / Halten = total DURATION
-       Beispiel: 4 + 2 + 4 + 2 = 12s */
     :root {
       --DURATION: 12s;
     }
@@ -31,10 +28,35 @@
       place-items: center;
       user-select: none;
       cursor: default;
+      position: relative;
     }
 
+    /* Äusserer Rahmenkreis (maximale Grösse) */
+    .background-circle {
+      position: absolute;
+      width: min(46vmin, 360px);
+      aspect-ratio: 1/1;
+      border-radius: 50%;
+      border: 2px solid rgba(255, 255, 255, 0.15);
+      transform: scale(1.00);
+      pointer-events: none;
+    }
+
+    /* Neuer kleiner Referenzkreis (minimale Grösse) */
+    .inner-reference {
+      position: absolute;
+      width: min(46vmin, 360px);
+      aspect-ratio: 1/1;
+      border-radius: 50%;
+      border: 2px solid rgba(255, 255, 255, 0.66);
+      box-shadow: 0 0 6px rgba(255, 255, 255, 0.3);
+      transform: scale(0.33);
+      pointer-events: none;
+    }
+
+    /* Hauptkreis (animiert, halbtransparent, damit die Referenzen sichtbar bleiben) */
     .circle {
-      background: #4f5f47;
+      background: rgba(79, 95, 71, 0.8);
       width: min(46vmin, 360px);
       aspect-ratio: 1/1;
       border-radius: 50%;
@@ -43,53 +65,32 @@
       animation: breathe var(--DURATION) ease-in-out infinite;
     }
 
-    .background-circle {
-      position: absolute;
-      width: min(46vmin, 360px);
-      aspect-ratio: 1/1;
-      border-radius: 50%;
-      border: 2px solid rgba(255, 255, 255, 0.15);
-      /* zarte Kontur */
-      transform: scale(1.00);
-      /* maximale Grösse */
-      pointer-events: none;
-      /* keine Interaktion */
-    }
-
-    /* Neu: Pausen integriert */
     @keyframes breathe {
       0% {
         transform: scale(0.33);
       }
 
-      /* Start – klein */
       33% {
         transform: scale(1.00);
       }
 
-      /* Ende Einatmen */
       50% {
         transform: scale(1.00);
       }
 
-      /* Halten gross */
       83% {
         transform: scale(0.33);
       }
 
-      /* Ende Ausatmen */
       100% {
         transform: scale(0.33);
       }
-
-      /* Halten klein */
     }
 
     .label {
       color: #ffffff;
       position: fixed;
       bottom: 6vh;
-      /* opacity: 0.45; */
       font-size: clamp(18px, 2.5vmin, 22px);
     }
 
@@ -100,10 +101,8 @@
       color: #ffffff;
       opacity: .1;
       transition: opacity .3s ease;
-
     }
 
-    /* Textphasen */
     .inhale {
       animation: showInhale var(--DURATION) linear infinite;
     }
@@ -193,6 +192,7 @@
 <body>
   <div class="wrap" aria-label="Atemübung – einatmen, halten, ausatmen, halten">
     <div class="background-circle" aria-hidden="true"></div>
+    <div class="inner-reference" aria-hidden="true"></div> <!-- neuer Kreis -->
     <div class="circle" role="img" aria-hidden="true"></div>
     <div class="label" aria-hidden="true">
       <span class="inhale">Einatmen</span>
@@ -201,20 +201,6 @@
       <span class="hold2"> · Halten</span>
     </div>
   </div>
-
-  <!-- <script>
-    // Klick oder Leertaste pausiert/fortsetzt
-    (function () {
-      let paused = false;
-      function toggle() {
-        paused = !paused;
-        document.querySelector('.circle').style.animationPlayState = paused ? 'paused' : 'running';
-        document.querySelectorAll('.label span').forEach(el => el.style.animationPlayState = paused ? 'paused' : 'running');
-      }
-      document.addEventListener('click', toggle);
-      document.addEventListener('keydown', e => { if (e.code === 'Space') { e.preventDefault(); toggle(); } });
-    })();
-  </script> -->
 </body>
 
 </html>
