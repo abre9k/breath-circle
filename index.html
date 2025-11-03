@@ -2,11 +2,11 @@
 <html lang="de-ch">
 
 <head>
-<link rel="icon" href="favicon.ico" type="image/x-icon" sizes="any">
-<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
-<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
-<link rel="manifest" href="site.webmanifest">
+  <link rel="icon" href="favicon.ico" type="image/x-icon" sizes="any">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+  <link rel="manifest" href="site.webmanifest">
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Breath Circle</title>
@@ -191,11 +191,81 @@
         opacity: .4;
       }
     }
+
+    /* Steuerung */
+    .controls {
+      position: fixed;
+      top: 6vh;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: .75rem;
+      align-items: center;
+      justify-content: center;
+      /* gesamte Gruppe zentrieren */
+      flex-wrap: wrap;
+    }
+
+    .controls button {
+      appearance: none;
+      border: 0;
+      padding: .6rem .9rem;
+      border-radius: .6rem;
+      font: inherit;
+      background: rgba(255, 255, 255, .15);
+      color: #fff;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, .15);
+      cursor: pointer;
+    }
+
+    .controls button:hover {
+      background: rgba(255, 255, 255, .25);
+    }
+
+    .controls .timer {
+      min-width: 5ch;
+      text-align: center;
+      color: #fff;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Animation pausieren, wenn Session fertig ist */
+    .paused .circle,
+    .paused .label span {
+      animation-play-state: paused;
+    }
+
+    /* Startposition erzwingen (Animation aus, kleiner Kreis, Inhale sichtbar) */
+    .at-start .circle,
+    .at-start .label span {
+      animation: none !important;
+    }
+
+    .at-start .circle {
+      transform: scale(0.33);
+    }
+
+    .at-start .inhale {
+      opacity: .6;
+    }
+
+    .at-start .hold1,
+    .at-start .exhale,
+    .at-start .hold2 {
+      opacity: .1;
+    }
   </style>
 </head>
 
 <body>
+
   <div class="wrap" aria-label="Atemübung – einatmen, halten, ausatmen, halten">
+    <div class="controls" aria-label="Sitzungssteuerung">
+      <button data-seconds="30">30 s</button>
+      <button data-seconds="60">1 min</button>
+      <button data-seconds="120">2 min</button>
+      <span class="timer" aria-live="polite" aria-atomic="true">00:00</span>
+    </div>
     <div class="background-circle" aria-hidden="true"></div>
     <div class="inner-reference" aria-hidden="true"></div> <!-- neuer Kreis -->
     <div class="circle" role="img" aria-hidden="true"></div>
@@ -206,6 +276,78 @@
       <span class="hold2"> · Halten</span>
     </div>
   </div>
+
+  <script>
+    (function () {
+      const timerEl = document.querySelector('.controls .timer');
+      const buttons = document.querySelectorAll('.controls button');
+      const circle = document.querySelector('.circle');
+      const labelSpans = document.querySelectorAll('.label span');
+
+      let tickInterval = null;
+      let endTimeout = null;
+      let remaining = 0;
+
+      function fmt(t) {
+        const m = Math.floor(t / 60);
+        const s = t % 60;
+        return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+      }
+
+      function clearTimers() {
+        if (tickInterval) { clearInterval(tickInterval); tickInterval = null; }
+        if (endTimeout) { clearTimeout(endTimeout); endTimeout = null; }
+      }
+
+      function restartAnimations() {
+        circle.style.animation = 'none';
+        labelSpans.forEach(s => s.style.animation = 'none');
+        void circle.offsetWidth;
+        circle.style.animation = '';
+        labelSpans.forEach(s => s.style.animation = '');
+      }
+
+      function startSession(seconds) {
+        document.body.classList.remove('paused', 'at-start');
+        clearTimers();
+        remaining = seconds;
+        timerEl.textContent = fmt(remaining);
+
+        restartAnimations();
+
+        tickInterval = setInterval(() => {
+          remaining -= 1;
+          if (remaining >= 0) timerEl.textContent = fmt(remaining);
+          if (remaining <= 0) clearInterval(tickInterval);
+        }, 1000);
+
+        endTimeout = setTimeout(() => {
+          document.body.classList.add('paused', 'at-start');
+          timerEl.textContent = 'Fertig';
+        }, seconds * 1000);
+      }
+
+      buttons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const sec = parseInt(btn.getAttribute('data-seconds'), 10);
+          startSession(sec);
+        });
+      });
+
+      let lastSeconds = 60;
+      buttons.forEach(b => b.addEventListener('click', () => lastSeconds = parseInt(b.dataset.seconds, 10)));
+      window.addEventListener('keydown', e => {
+        if (e.code === 'Space') {
+          e.preventDefault();
+          startSession(lastSeconds);
+        }
+      });
+
+      document.body.classList.remove('paused', 'at-start');
+    })();
+  </script>
+
+
 </body>
 
 </html>
