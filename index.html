@@ -192,19 +192,48 @@
       }
     }
 
-    /* Steuerung */
     .controls {
       position: fixed;
       top: 6vh;
       left: 50%;
       transform: translateX(-50%);
-      display: flex;
-      gap: .75rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      /* 3 Spalten */
+      grid-template-rows: auto auto;
+      /* 2 Reihen */
+      gap: 2rem 0rem;
       align-items: center;
-      justify-content: center;
-      /* gesamte Gruppe zentrieren */
-      flex-wrap: wrap;
+      justify-items: center;
+      width: min(420px, 90vw);
+      /* alles mittig, rechts/links symmetrisch */
     }
+
+    /* Positionen im Grid */
+    .controls .timer {
+      grid-column: 2;
+      grid-row: 1;
+    }
+
+    /* oben mittig */
+    .controls .btn30 {
+      grid-column: 1;
+      grid-row: 2;
+    }
+
+    /* unten links */
+    .controls .btn60 {
+      grid-column: 2;
+      grid-row: 2;
+    }
+
+    /* unten mitte */
+    .controls .btn120 {
+      grid-column: 3;
+      grid-row: 2;
+    }
+
+    /* unten rechts */
 
     .controls button {
       appearance: none;
@@ -212,11 +241,11 @@
       padding: .6rem .9rem;
       border-radius: .6rem;
       font: inherit;
-      background: rgba(255, 255, 255, .15);
-      color: #fff;
+      background: rgba(255, 255, 255, 0.078);
+      color: #e6e6e6;
       box-shadow: 0 2px 6px rgba(0, 0, 0, .15);
       cursor: pointer;
-      width: 70px;
+      width: 75px;
       /* einheitliche Breite */
       text-align: center;
     }
@@ -228,8 +257,12 @@
     .controls .timer {
       min-width: 5ch;
       text-align: center;
-      color: #fff;
+      color: #e6e6e6;
       font-variant-numeric: tabular-nums;
+    }
+
+    .timer {
+      font-size:large;
     }
 
     /* Animation pausieren, wenn Session fertig ist */
@@ -264,10 +297,10 @@
 
   <div class="wrap" aria-label="Atemübung – einatmen, halten, ausatmen, halten">
     <div class="controls" aria-label="Sitzungssteuerung">
-      <button data-seconds="30">30 s</button>
-      <button data-seconds="60">1 min</button>
-      <button data-seconds="120">2 min</button>
       <span class="timer" aria-live="polite" aria-atomic="true">00:00</span>
+      <button class="btn30" data-seconds="30">30 sek</button>
+      <button class="btn60" data-seconds="60">1 min</button>
+      <button class="btn120" data-seconds="120">2 min</button>
     </div>
     <div class="background-circle" aria-hidden="true"></div>
     <div class="inner-reference" aria-hidden="true"></div> <!-- neuer Kreis -->
